@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EMIS Search · South African Schools 2025</title>
+  <meta name="description" content="Search 25,000+ South African public and independent schools by name, EMIS number, town, district, quintile and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">SA</div>
+      <div>
+        <h1>EMIS Search</h1>
+        <p>National schools master list · 2025</p>
+      </div>
+    </div>
+    <div class="top-meta" id="loadStatus">Loading register…</div>
+  </header>
+
+  <section class="search-wrap">
+    <div class="search-box">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input id="q" type="search" autocomplete="off" spellcheck="false"
+        placeholder="Search school name, EMIS number, town, district or suburb…" />
+      <button id="clearQ" class="ghost" hidden>Clear</button>
+    </div>
+    <p class="hint">Try <button class="chip-link" data-q="Bizana">Bizana</button>, <button class="chip-link" data-q="200500039">an EMIS number</button>, <button class="chip-link" data-q="Saldanha">Saldanha</button> or <button class="chip-link" data-q="full service">full service</button>.</p>
+  </section>
+
+  <main class="layout">
+    <aside class="filters" id="filters">
+      <div class="filter-head">
+        <h2>Filters</h2>
+        <button id="resetFilters" class="ghost">Reset</button>
+      </div>
+
+      <label class="field">
+        <span>Province</span>
+        <select id="fProv">
+          <option value="">All provinces</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Phase</span>
+        <select id="fPhase">
+          <option value="">All phases</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Sector</span>
+        <select id="fSector">
+          <option value="">Public &amp; independent</option>
+          <option value="P">Public</option>
+          <option value="I">Independent</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Quintile</span>
+        <select id="fQ">
+          <option value="">All quintiles</option>
+          <option value="Q1">Q1 — poorest</option>
+          <option value="Q2">Q2</option>
+          <option value="Q3">Q3</option>
+          <option value="Q4">Q4</option>
+          <option value="Q5">Q5 — least poor</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Fees</span>
+        <select id="fFee">
+          <option value="">Any</option>
+          <option value="0">No-fee school</option>
+          <option value="1">Fee-charging</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Setting</span>
+        <select id="fUrban">
+          <option value="">Urban &amp; rural</option>
+          <option value="1">Urban</option>
+          <option value="0">Rural</option>
+        </select>
+      </label>
+
+      <div class="stats" id="facetStats"></div>
+    </aside>
+
+    <section class="results">
+      <div class="results-bar">
+        <div id="count">—</div>
+        <label class="sort">
+          Sort
+          <select id="sort">
+            <option value="rel">Best match</option>
+            <option value="name">Name A–Z</option>
+            <option value="learners">Most learners</option>
+            <option value="ratio">Highest learner:educator</option>
+          </select>
+        </label>
+      </div>
+      <ul id="list" class="list"></ul>
+      <div id="pager" class="pager"></div>
+      <p id="empty" class="empty" hidden>No schools match those filters. Try a shorter name or clear a filter.</p>
+    </section>
+  </main>
+
+  <div id="drawer" class="drawer" hidden>
+    <div class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="dName">
+      <button class="close" id="closeDrawer" aria-label="Close">×</button>
+      <div id="drawerBody"></div>
+    </div>
+  </div>
+
+  <footer>
+    Built from the national EMIS Q3 2025 register. Coordinates that fell outside South Africa were dropped. This is an unofficial lookup tool.
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
