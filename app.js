@@ -275,12 +275,12 @@ async function boot() {
   }
   try {
     const shards = await Promise.all(
-      Array.from({ length: 8 }, (_, i) => loadJson("data/shard-" + i + ".json.gz"))
+      Array.from({ length: 16 }, (_, i) => loadJson("data/schools/shard-" + i + ".json.gz"))
     );
     DATA = shards.flat();
   } catch (e) {
     const shards = await Promise.all(
-      Array.from({ length: 8 }, (_, i) => loadJson("data/shard-" + i + ".json"))
+      Array.from({ length: 16 }, (_, i) => loadJson("data/schools/shard-" + i + ".json"))
     );
     DATA = shards.flat();
   }
