@@ -1,0 +1,17 @@
+{
+  "name": "emis-search-lambda",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Bedrock AI Lambda for EMIS school search",
+  "main": "index.mjs",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/lambda.test.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.600.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.0"
+  }
+}

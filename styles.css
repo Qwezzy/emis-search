@@ -116,3 +116,44 @@ footer { padding: 0 28px 28px; font-size: .82rem; }
   .top, .search-wrap, footer { padding-left: 16px; padding-right: 16px; }
   .kv { grid-template-columns: 1fr; }
 }
+
+/* ── AI Search ──────────────────────────────────────────────────────────────── */
+.ai-search-wrap {
+  padding: 12px 28px 0;
+}
+.ai-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #f0f7f3, var(--card));
+  border: 1px solid var(--green);
+  border-radius: 16px;
+  padding: 10px 14px;
+  box-shadow: var(--shadow);
+}
+.ai-bar--disabled {
+  border-color: var(--line);
+  opacity: 0.6;
+}
+.ai-bar input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  font: inherit;
+  font-size: 1.05rem;
+  background: transparent;
+}
+.ai-icon {
+  color: var(--green);
+  font-size: 1.1rem;
+  flex: none;
+  line-height: 1;
+}
+.ai-hint {
+  margin: 6px 4px 0;
+  font-size: .85rem;
+  color: var(--muted);
+}
+@media (max-width: 860px) {
+  .ai-search-wrap { padding-left: 16px; padding-right: 16px; }
+}

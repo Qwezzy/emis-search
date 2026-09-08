@@ -1,3 +1,5 @@
+import { aiParse, aiAvailable } from "./ai.js";
+
 const PROV = {
   EC: "Eastern Cape", FS: "Free State", GT: "Gauteng", KZN: "KwaZulu-Natal",
   LP: "Limpopo", MP: "Mpumalanga", NC: "Northern Cape", NW: "North West", WC: "Western Cape"
@@ -127,7 +129,7 @@ function card(r) {
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({
-    "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;"
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[c]));
 }
 
@@ -212,6 +214,108 @@ function hydrateFilters() {
   $("fPhase").innerHTML += phases.map((p) => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join("");
 }
 
+// ── AI Search ─────────────────────────────────────────────────────────────────
+
+function applyAiFilters({ filters = {}, freeText = "" }) {
+  const FIELD_MAP = {
+    p: "fProv",
+    ph: "fPhase",
+    se: "fSector",
+    q: "fQ",
+    f: "fFee",
+    u: "fUrban",
+  };
+
+  // Reset all dropdowns
+  Object.values(FIELD_MAP).forEach((id) => {
+    const el = $(id);
+    if (el) el.value = "";
+  });
+
+  // Apply AI-returned filters
+  for (const [key, val] of Object.entries(filters)) {
+    const id = FIELD_MAP[key];
+    if (id) {
+      const el = $(id);
+      if (el) el.value = val;
+    }
+  }
+
+  // Put remaining text into search box
+  $("q").value = freeText;
+  apply();
+}
+
+function setAiStatus(msg, isError = false) {
+  const el = $("aiStatus");
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isError ? "var(--gold)" : "var(--muted)";
+  el.hidden = !msg;
+}
+
+function initAI() {
+  const wrap = $("aiSearchWrap");
+  if (!wrap) return;
+
+  const available = aiAvailable();
+
+  if (!available) {
+    wrap.innerHTML = `
+      <div class="ai-bar ai-bar--disabled">
+        <span class="ai-icon" aria-hidden="true">✦</span>
+        <input disabled placeholder="AI search — set AI_ENDPOINT in ai.js to enable" />
+      </div>
+      <p class="ai-hint">Natural language search powered by Amazon Bedrock</p>
+    `;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="ai-bar">
+      <span class="ai-icon" aria-hidden="true">✦</span>
+      <input id="aiQ" type="text" autocomplete="off" spellcheck="false"
+        placeholder="Ask anything — e.g. &quot;rural no-fee schools in KwaZulu-Natal&quot;" />
+      <button id="aiSubmit" class="btn" aria-label="Search with AI">Ask</button>
+    </div>
+    <p id="aiStatus" class="ai-hint" hidden></p>
+  `;
+
+  const input = $("aiQ");
+  const btn = $("aiSubmit");
+
+  async function runAiSearch() {
+    const query = input.value.trim();
+    if (!query) return;
+
+    btn.disabled = true;
+    btn.textContent = "…";
+    setAiStatus("Thinking…");
+
+    try {
+      const result = await aiParse(query);
+      applyAiFilters(result);
+
+      const parts = [];
+      if (Object.keys(result.filters).length) parts.push("filters applied");
+      if (result.freeText) parts.push(`searching "${result.freeText}"`);
+      setAiStatus(parts.length ? `AI: ${parts.join(", ")}` : "AI: no specific filters found");
+    } catch (err) {
+      setAiStatus(`Error: ${err.message}`, true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Ask";
+    }
+  }
+
+  btn.addEventListener("click", runAiSearch);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") runAiSearch();
+  });
+}
+
+// ── Event bindings ────────────────────────────────────────────────────────────
+
 let t = null;
 function bind() {
   $("q").addEventListener("input", () => {
@@ -262,6 +366,8 @@ function bind() {
   });
 }
 
+// ── Boot ──────────────────────────────────────────────────────────────────────
+
 async function boot() {
   bind();
   async function loadJson(url) {
@@ -287,6 +393,7 @@ async function boot() {
   $("loadStatus").textContent = `${DATA.length.toLocaleString("en-ZA")} schools loaded`;
   hydrateFilters();
   apply();
+  initAI();
 }
 
 boot().catch((err) => {
